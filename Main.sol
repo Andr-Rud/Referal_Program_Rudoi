@@ -35,7 +35,7 @@ contract Main is Referal{
     }
 
     function give_money() override payable public{
-        info.add(msg.sender, msg.value);      
+        info.add(msg.sender, msg.value * 95 / 100); // комиссия 5 процентов      
     }
 
     function see_my_partners_lvls() override public view returns(uint[] memory){
