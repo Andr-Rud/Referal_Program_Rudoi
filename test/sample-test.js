@@ -1,19 +1,37 @@
 const { expect } = require("chai");
 const { ethers } = require("hardhat");
+const { Contract } = require("hardhat/internal/hardhat-network/stack-traces/model");
 
-describe("Greeter", function () {
-  it("Should return the new greeting once it's changed", async function () {
-    const Greeter = await ethers.getContractFactory("Greeter");
-    const greeter = await Greeter.deploy("Hello, world!");
-    await greeter.deployed();
+describe("ClientInfo", function() {
+    let acc1;
+    let acc2;
+    let clientInfo;
+    let referalTree;
 
-    expect(await greeter.greet()).to.equal("Hello, world!");
+    beforeEach(async function() {
+        [acc1, acc2] = await ethers.getSigners();
 
-    const setGreetingTx = await greeter.setGreeting("Hola, mundo!");
+        const ClientInfo = await ethers.getContractFactory("ClientInfo", acc1);
+        clientInfo = await ClientInfo.deploy();
+        await clientInfo.deployed();
 
-    // wait until the transaction is mined
-    await setGreetingTx.wait();
+        const ReferalTree = await ethers.getContractFactory("ReferalTree", acc1);
+        referalTree = await ReferalTree.deploy();
+        await referalTree.deployed();
 
-    expect(await greeter.greet()).to.equal("Hola, mundo!");
-  });
-});
+        await clientInfo.initialize(referalTree.address)
+    })
+
+    it("ClientInfo.sol should be deployed", async function() {
+        expect(clientInfo.address).to.be.properAddress;
+    })
+
+    it("ReferalTree.sol should be deployed", async function() {
+        expect(referalTree.address).to.be.properAddress;
+    })
+
+    it("Zero balance after init", async function() {
+        expect(await clientInfo.getMyBalance()).to.equal(0);
+    })
+
+})

@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity ^0.8.4;
+pragma solidity 0.8.14;
 
-interface IReferalTree{ // реализация древовидной структуры реферальной программы
+interface IReferalTree{
 
     function addNewClient(address, address) external;
 
-    function getFather(address) external view returns(address);
+    function getReferal(address) external view returns(address);
 
-    function getAllDirectPartners(address) external view returns(address[] memory);
+    function getDirectPartners(address) external view returns(address[] memory);
 }
